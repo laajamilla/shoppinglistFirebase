@@ -21,23 +21,24 @@ const database = getDatabase(app);
 
   const [ product, setProduct ] = useState('');
   const [ amount, setAmount ] = useState('');
+  const [ keys, setKeys ] = useState([]);
   const [ items, setItems ] = useState([]);
   
 
-  useEffect(() => {
+   useEffect(() => {
     const itemsRef = ref(database, 'items/');
     onValue(itemsRef, (snapshot) => {
      // console.log(snapshot);
       const data = snapshot.val();
       //console.log(data);
       //setItems(Object.values(data));
-      setItems(data);
-     //setItems(Object.keys(data));
+      setKeys(Object.keys(data));
+      setItems(keys.map(key => ({key, ...data[key]})));
 
     })
   }, []);
   
-    console.log(items);
+    //console.log(items);
 
   const saveItem = () => {
     console.log("saveItem functio");
@@ -49,15 +50,15 @@ const database = getDatabase(app);
     setAmount('');
   }
 
-  const deleteItem = () => {
+  const deleteItem = (key) => {
     console.log('delete button');
+    console.log(key);
     // tuo funktiokutsun mukana id
-    // sijoita id oikealle paikalle
-    // tarkista, ettei ole jo null -> jos ei ole, poista
 
-    const itemsRef = ref(database, 'items/-NDDuKnoOYmrplPxfW5m');
+    //const itemsRef = ref(database, 'items/');
+    const itemsRef = ref(database, `items/${key}`);
     console.log(itemsRef);
-   // remove(itemsRef);
+    remove(itemsRef);
    
   }
 
@@ -81,13 +82,11 @@ const database = getDatabase(app);
         title='save'
         onPress={saveItem}
       ></Button>
-      <Button
-        title='delete'
-        onPress={deleteItem}
-      ></Button>
 
       <FlatList
-       
+        data={items}
+        keyExtractor={item => item.key.toString()}
+        renderItem={({item}) => <View><Text>{item.product}, {item.amount}<Text style={{color: 'blue'}} onPress={() => deleteItem(item.key)} > delete</Text></Text></View>}
       
       ></FlatList>
       <StatusBar style="auto" />
