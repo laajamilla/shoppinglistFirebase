@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Button, FlatList } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, FlatList, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, push, ref, onValue, remove } from 'firebase/database';
@@ -21,7 +21,6 @@ const database = getDatabase(app);
 
   const [ product, setProduct ] = useState('');
   const [ amount, setAmount ] = useState('');
-  const [ keys, setKeys ] = useState([]);
   const [ items, setItems ] = useState([]);
   
 
@@ -29,18 +28,34 @@ const database = getDatabase(app);
     const itemsRef = ref(database, 'items/');
     onValue(itemsRef, (snapshot) => {
      // console.log(snapshot);
+
+      let yes = snapshot.exists();
+
+      if (yes) {
+
       const data = snapshot.val();
-      //console.log(data);
-      //setItems(Object.values(data));
-      setKeys(Object.keys(data));
+     // console.log(data);
+     
+      if (data != null) {
+
+      const keys = Object.keys(data);
+      //console.log('avaimet');
+      //console.log(keys);
+
       setItems(keys.map(key => ({key, ...data[key]})));
+      } else {
+        Alert.alert('no data');
+      }
+    }
+      else {
+        Alert.alert('No shopping list items');
+      }
 
     })
   }, []);
   
-    //console.log(items);
 
-  const saveItem = () => {
+    const saveItem = () => {
     console.log("saveItem functio");
     push(
       ref(database, 'items/'),
@@ -85,9 +100,9 @@ const database = getDatabase(app);
 
       <FlatList
         data={items}
-        keyExtractor={item => item.key.toString()}
+        keyExtractor={(item) => item.key.toString()}
         renderItem={({item}) => <View><Text>{item.product}, {item.amount}<Text style={{color: 'blue'}} onPress={() => deleteItem(item.key)} > delete</Text></Text></View>}
-      
+        
       ></FlatList>
       <StatusBar style="auto" />
     </View>
