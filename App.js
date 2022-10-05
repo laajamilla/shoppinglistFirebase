@@ -34,24 +34,17 @@ const database = getDatabase(app);
       if (yes) {
 
       const data = snapshot.val();
-     // console.log(data);
-     
-      if (data != null) {
-
+      //jos key on null, ongelma -> else- lohkossa
+      //asetetaan siinä tapauksessa tyhjä lista
       const keys = Object.keys(data);
-      //console.log('avaimet');
-      //console.log(keys);
-
+   
       setItems(keys.map(key => ({key, ...data[key]})));
-      } else {
-        Alert.alert('no data');
       }
-    }
-      else {
-        Alert.alert('No shopping list items');
-      }
-
+        else {
+          setItems([]);
+        }
     })
+  
   }, []);
   
 
