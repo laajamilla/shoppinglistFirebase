@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Button, FlatList, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, FlatList, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, push, ref, onValue, remove } from 'firebase/database';
+import { Header, Icon, Input, Button, ListItem} from 'react-native-elements';
+
 
 export default function App() {
 
@@ -69,33 +71,47 @@ const database = getDatabase(app);
     remove(itemsRef);
    
   }
-
-
+  // tätä en saa millään toimimaan
+  const renderItemComponent = ({item}) => (
+    
+    <ListItem bottomDivider>
+        <ListItem.Content>
+          <ListItem.Title><Text>{item.product}</Text></ListItem.Title> 
+        </ListItem.Content>
+      </ListItem>
+)
+  
   return (
     <View style={styles.container}>
-      <Text>firebase</Text>
-      <TextInput
-        style={{marginTop:40, fontSize: 18, width: 200, borderColor: 'grey', borderWidth: 1}}
+      
+    <Header
+      leftComponent={{icon: 'menu', color: '#fff'}}
+      centerComponent={{ text: 'SHOPPING LIST', style: {color: '#fff'}}}
+      rightComponent={{ icon: 'home', color: '#fff'}}
+    ></Header>
+      <Input
+        placeholder='Product' label='PRODUCT'
         onChangeText={text => setProduct(text)}
         value={product}
-        placeholder='product'
-      ></TextInput>
-      <TextInput
-        style={{marginTop:5, marginBottom: 5, fontSize: 18, width: 200, borderColor: 'grey', borderWidth: 1}}
+      ></Input>
+      <Input
+        placeholder='Amount' label='AMOUNT'
         onChangeText={text => setAmount(text)}
         value={amount}
-        placeholder='amount'
-      ></TextInput>
+      ></Input>
+      
       <Button
-        title='save'
+        raised
+        icon={{name: 'save', color: 'white'}}
         onPress={saveItem}
+        title='SAVE'
       ></Button>
 
       <FlatList
         data={items}
         keyExtractor={(item) => item.key.toString()}
-        renderItem={({item}) => <View><Text>{item.product}, {item.amount}<Text style={{color: 'blue'}} onPress={() => deleteItem(item.key)} > delete</Text></Text></View>}
-        
+        renderItem={({item}) => <View><Text>{item.product}, {item.amount} <Icon type="material" name="delete" color="red" onPress={() => deleteItem(item.key)}></Icon></Text></View>}
+          
       ></FlatList>
       <StatusBar style="auto" />
     </View>
