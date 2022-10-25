@@ -71,16 +71,9 @@ const database = getDatabase(app);
     remove(itemsRef);
    
   }
-  // tätä en saa millään toimimaan
-  const renderItemComponent = ({item}) => (
-    
-    <ListItem bottomDivider>
-        <ListItem.Content>
-          <ListItem.Title><Text>{item.product}</Text></ListItem.Title> 
-        </ListItem.Content>
-      </ListItem>
-)
   
+    //<View><Text>{item.product}, {item.amount} <Icon type="material" name="delete" color="red" onPress={() => deleteItem(item.key)}></Icon></Text></View>
+
   return (
     <View style={styles.container}>
       
@@ -110,8 +103,14 @@ const database = getDatabase(app);
       <FlatList
         data={items}
         keyExtractor={(item) => item.key.toString()}
-        renderItem={({item}) => <View><Text>{item.product}, {item.amount} <Icon type="material" name="delete" color="red" onPress={() => deleteItem(item.key)}></Icon></Text></View>}
-          
+        renderItem={({item, index}) => 
+        <ListItem bottomDivider key={String(index)}>
+        <ListItem.Content>
+            <ListItem.Title><Text>{item.product}</Text></ListItem.Title>
+            <ListItem.Title><Text>{item.amount}</Text></ListItem.Title>  
+          </ListItem.Content>
+          <Icon type="material" name="delete" color="red" onPress={() => deleteItem(item.key)}></Icon>
+        </ListItem>}     
       ></FlatList>
       <StatusBar style="auto" />
     </View>
